@@ -1,41 +1,44 @@
-// app/api/summarize/route.js
-import { OpenAI } from "openai";
+import axios from "axios";
 
 export async function POST(req) {
+  // Read the body of the request
   const { text } = await req.json();
 
-  if (!text) {
-    console.log("Error: No text provided");
-    return new Response(JSON.stringify({ error: "Text is required" }), {
-      status: 400,
-    });
+  // Ensure that text is provided
+  if (!text || text.trim() === "") {
+    return new Response(
+      JSON.stringify({ error: "Text is required" }),
+      { status: 400 }
+    );
   }
 
   try {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,  // Ensure API key is in the environment variables
-    });
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful assistant for summarizing content.",
+    // Call the Hugging Face API for text summarization
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/facebook/bart-large-cnn", // Hugging Face model URL
+      {
+        inputs: `Summarize this: ${text}`,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`, // Your Hugging Face API key
+          "Content-Type": "application/json",
         },
-        {
-          role: "user",
-          content: `Summarize the following text: ${text}`,
-        },
-      ],
-    });
+      }
+    );
 
-    const summary = response.choices[0].message.content.trim();
-    return new Response(JSON.stringify({ result: summary }), { status: 200 });
-  } catch (error) {
-    console.error("Error with OpenAI API:", error);
+    const summary = response.data[0]?.summary_text || "No summary returned.";
+    
+    // Return the summary as JSON
     return new Response(
-      JSON.stringify({ error: "Error with OpenAI API", details: error.message }),
+      JSON.stringify({ result: summary }),
+      { status: 200 }
+    );
+  } catch (err) {
+    // Handle any errors during the summarization process
+    console.error("Summarization error:", err.response?.data || err.message);
+    return new Response(
+      JSON.stringify({ error: "Failed to summarize" }),
       { status: 500 }
     );
   }
