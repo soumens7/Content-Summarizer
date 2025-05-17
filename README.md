@@ -32,9 +32,9 @@ A simple and elegant web app that allows users to summarize large blocks of text
 
 ## 📁 Project Structure
 
-/app
-└── /api
-└── /summarize
+/app  
+└── /api  
+└── /summarize  
 └── route.js # Server action using Hugging Face API
 
 └── page.js # Main frontend logic
