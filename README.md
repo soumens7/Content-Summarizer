@@ -19,8 +19,8 @@ A simple and elegant web app that allows users to summarize large blocks of text
 > Check out the live version of the project [here](https://content-summarizer-msdb.onrender.com)
 
 ---
-![alt text](<Screenshot 2025-05-18 at 3.36.29 PM.png>)
----
+
+## ![alt text](<Screenshot 2025-05-18 at 3.36.29 PM.png>)
 
 ## 🛠️ Tech Stack
 
