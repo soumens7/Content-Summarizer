@@ -16,7 +16,7 @@ A simple and elegant web app that allows users to summarize large blocks of text
 
 ## 🚀 Live Demo
 
-> Check out the live version of the project [here](https://content-summarizer-msdb.onrender.com)
+> Check out the live version of the project [here](https://content-summarizer-swart.vercel.app/)
 
 ---
 
