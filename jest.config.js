@@ -1,7 +1,14 @@
-module.exports = {
-    testEnvironment: "jest-environment-jsdom",
-    moduleFileExtensions: ["js", "jsx"],
-    moduleDirectories: ["node_modules", "<rootDir>/"],
-    setupFilesAfterEnv: ["@testing-library/jest-dom"], 
-  };
-  
+
+const nextJest = require('next/jest')
+
+const createJestConfig = nextJest({ dir: './' })
+
+/** @type {import('jest').Config} */
+const customJestConfig = {
+  testEnvironment: 'jest-environment-jsdom',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  // optional: ignore E2E or build outputs
+  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+}
+
+module.exports = createJestConfig(customJestConfig)
