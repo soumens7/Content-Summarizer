@@ -18,6 +18,8 @@ A simple and elegant web app that allows users to summarize large blocks of text
 
 > Check out the live version of the project [here](https://content-summarizer-swart.vercel.app/)
 
+[![CI](https://github.com/soumens7/Content-Summarizer/actions/workflows/ci.yml/badge.svg)](https://github.com/soumens7/Content-Summarizer/actions)
+
 ---
 
 ## ![alt text](<Screenshot 2025-05-18 at 3.36.29 PM.png>)
