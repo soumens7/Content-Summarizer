@@ -1,14 +1,16 @@
+const nextJest = require("next/jest");
 
-const nextJest = require('next/jest')
-
-const createJestConfig = nextJest({ dir: './' })
+const createJestConfig = nextJest({ dir: "./" });
 
 /** @type {import('jest').Config} */
 const customJestConfig = {
-  testEnvironment: 'jest-environment-jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: "node", // default to Node
+  setupFiles: ["<rootDir>/_tests_/setupEnv.js"],
   // optional: ignore E2E or build outputs
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
-}
+  testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
+  moduleNameMapper: {
+    "^axios$": "<rootDir>/_tests_/_mocks_/axios.js",
+  },
+};
 
-module.exports = createJestConfig(customJestConfig)
+module.exports = createJestConfig(customJestConfig);
