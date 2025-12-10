@@ -19,7 +19,7 @@ export async function POST(req) {
       status: 400,
     });
   }
-
+try {
   try {
     // Call the Hugging Face API for text summarization
     const response = await axios.post(
@@ -52,4 +52,7 @@ export async function POST(req) {
     const summary = fallback.data[0]?.summary_text || "No summary returned.";
     return new Response(JSON.stringify({ result: summary }), { status: 200 });
   }
+} catch (ex) {
+  return new Response(JSON.stringify({ error: "Failed to summarize" }), { status: 500 });
+}
 }
