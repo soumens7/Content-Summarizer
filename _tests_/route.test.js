@@ -13,11 +13,10 @@ describe("POST /api/summarize/route", () => {
   beforeAll(() => {
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
-  
+
   afterAll(() => {
     console.error.mockRestore();
   });
-  
 
   it("should return 400 if text is missing", async () => {
     const req = new Request("http://localhost/api/summarize/route", {
@@ -50,7 +49,7 @@ describe("POST /api/summarize/route", () => {
 
     // Verify axios called with expected Hugging Face URL
     expect(axios.post).toHaveBeenCalledWith(
-      "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
+      "https://router.huggingface.co/hf-inference/models/sshleifer/distilbart-cnn-12-6",
       { inputs: expect.stringContaining("Long input text...") },
       expect.objectContaining({
         headers: expect.objectContaining({
