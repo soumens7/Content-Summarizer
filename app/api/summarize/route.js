@@ -9,7 +9,6 @@ export async function POST(req) {
       { status: 429 }
     );
   }
-
   lastCall = now;
   // Read the body of the request
   const { text } = await req.json();
@@ -24,13 +23,13 @@ export async function POST(req) {
   try {
     // Call the Hugging Face API for text summarization
     const response = await axios.post(
-      "https://router.huggingface.co/hf-inference/models/sshleifer/distilbart-cnn-12-6", // Hugging Face model URL
+      "https://router.huggingface.co/hf-inference/models/sshleifer/distilbart-cnn-12-6",
       {
-        inputs: `Summarize this: ${text}`,
+        inputs: text,
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`, // Your Hugging Face API key
+          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
@@ -41,10 +40,16 @@ export async function POST(req) {
     // Return the summary as JSON
     return new Response(JSON.stringify({ result: summary }), { status: 200 });
   } catch (err) {
-    // Handle any errors during the summarization process
-    console.error("Summarization error:", err.response?.data || err.message);
-    return new Response(JSON.stringify({ error: "Failed to summarize" }), {
-      status: 500,
-    });
+    // fallback
+    const fallback = await axios.post(
+      "https://router.huggingface.co/hf-inference/models/google/pegasus-xsum",
+      { inputs: text },
+      {
+        headers: { Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}` },
+      }
+    );
+
+    const summary = fallback.data[0]?.summary_text || "No summary returned.";
+    return new Response(JSON.stringify({ result: summary }), { status: 200 });
   }
 }
