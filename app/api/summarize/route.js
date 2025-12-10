@@ -19,40 +19,44 @@ export async function POST(req) {
       status: 400,
     });
   }
-try {
   try {
-    // Call the Hugging Face API for text summarization
-    const response = await axios.post(
-      "https://router.huggingface.co/hf-inference/models/sshleifer/distilbart-cnn-12-6",
-      {
-        inputs: text,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-          "Content-Type": "application/json",
+    try {
+      // Call the Hugging Face API for text summarization
+      const response = await axios.post(
+        "https://router.huggingface.co/hf-inference/models/sshleifer/distilbart-cnn-12-6",
+        {
+          inputs: text,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const summary = response.data[0]?.summary_text || "No summary returned.";
+      const summary = response.data[0]?.summary_text || "No summary returned.";
 
-    // Return the summary as JSON
-    return new Response(JSON.stringify({ result: summary }), { status: 200 });
-  } catch (err) {
-    // fallback
-    const fallback = await axios.post(
-      "https://router.huggingface.co/hf-inference/models/google/pegasus-xsum",
-      { inputs: text },
-      {
-        headers: { Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}` },
-      }
-    );
+      // Return the summary as JSON
+      return new Response(JSON.stringify({ result: summary }), { status: 200 });
+    } catch (err) {
+      // fallback
+      const fallback = await axios.post(
+        "https://router.huggingface.co/hf-inference/models/google/pegasus-xsum",
+        { inputs: text },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+          },
+        }
+      );
 
-    const summary = fallback.data[0]?.summary_text || "No summary returned.";
-    return new Response(JSON.stringify({ result: summary }), { status: 200 });
+      const summary = fallback.data[0]?.summary_text || "No summary returned.";
+      return new Response(JSON.stringify({ result: summary }), { status: 200 });
+    }
+  } catch (ex) {
+    return new Response(JSON.stringify({ error: "Failed to summarize" }), {
+      status: 500,
+    });
   }
-} catch (ex) {
-  return new Response(JSON.stringify({ error: "Failed to summarize" }), { status: 500 });
-}
 }
